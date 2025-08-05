@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>底部按鈕滑動 Demo</title>
+    <!-- 載入 Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom styles */
+        body {
+            /* Ensure content is not obscured by the fixed bottom bar, leave enough bottom space */
+            padding-bottom: 20vh;
+            min-height: 100vh; /* Ensure the page takes at least the full viewport height */
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between; /* Separate content and bottom bar */
+            font-family: 'Inter', sans-serif; /* Use Inter font */
+        }
+
+        /* Styles for the fixed bottom bar */
+        .bottom-fixed-bar {
+            position: fixed; /* Fixed on viewport */
+            bottom: 0;       /* Align to bottom */
+            left: 0;         /* Align to left */
+            width: 100%;     /* Full width */
+            height: 20vh;    /* Height is 20% of viewport height */
+            background-color: #f0f0f0; /* Light gray background for visibility */
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1); /* Top shadow effect */
+            display: flex;   /* Use Flexbox for internal elements */
+            flex-direction: column; /* Stack content and slider vertically */
+            justify-content: flex-start; /* Align items from the start (top) */
+            align-items: flex-start; /* Align all child elements to the left horizontally */
+            padding-top: 1rem; /* Top padding */
+            padding-bottom: 0; /* Key: No bottom padding for the bar itself */
+            padding-left: 0; /* No left padding for the bar itself */
+            padding-right: 0; /* No right padding for the bar itself */
+            border-top-left-radius: 1.5rem; /* Rounded corners */
+            border-top-right-radius: 1.5rem; /* Rounded corners */
+        }
+
+        /* Styles for the blessing text */
+        .blessing-text {
+            font-size: 9px; /* Exactly 9px */
+            color: #6b7280; /* Gray text */
+            margin-bottom: 0.5rem; /* Space below text and button container */
+            margin-left: 1rem; /* Indent text from the left */
+            margin-right: 1rem; /* Ensure text stays within parent with right margin */
+            width: calc(100% - 2rem); /* Ensure text takes full width minus side margins */
+            text-align: left; /* Align text to the left */
+            flex-shrink: 0; /* Prevent text from shrinking when space is limited */
+        }
+
+        /* Styles for the button container */
+        .buttons-container {
+            display: flex;   /* Use Flexbox for buttons */
+            align-items: center; /* Vertically center buttons */
+            overflow-x: auto; /* Allow horizontal scrolling */
+            -webkit-overflow-scrolling: touch; /* Improve scrolling experience on iOS */
+            white-space: nowrap; /* Prevent buttons from wrapping */
+            width: 100%; /* Take full width of parent */
+            flex-grow: 1; /* Allow button container to take remaining vertical space in bottom bar */
+            height: 0; /* Used with flex-grow: 1 to correctly calculate height in a flex column */
+            padding: 0 1rem; /* Horizontal padding for the button container */
+            padding-bottom: 0.5rem; /* Key: Add bottom padding here to separate buttons from slider */
+            /* Enable scroll snapping */
+            scroll-snap-type: x mandatory;
+            scroll-padding-left: 0.5rem; /* Ensure the first button snaps correctly */
+            scroll-padding-right: 0.5rem; /* Ensure the last button snaps correctly */
+        }
+
+        /* Hide scrollbar but keep scrolling functionality */
+        .buttons-container::-webkit-scrollbar {
+            display: none; /* For Webkit browsers (Chrome, Safari) */
+        }
+        .buttons-container {
+            -ms-overflow-style: none;  /* For IE and Edge */
+            scrollbar-width: none;     /* For Firefox */
+        }
+
+        /* Styles for individual button wrappers */
+        .button-wrapper {
+            flex-shrink: 0; /* Prevent buttons from shrinking when space is limited */
+            margin: 0 0.5rem; /* Space between buttons */
+            display: flex; /* Use flex to center image */
+            justify-content: center;
+            align-items: center;
+            background: none;
+            border: none;
+            padding: 0;
+            cursor: pointer;
+            transition: transform 0.2s ease-in-out; /* Add hover animation */
+            border-radius: 0.75rem; /* Rounded corners */
+            overflow: hidden; /* Ensure image rounded corners */
+            /* Set scroll snap point */
+            scroll-snap-align: start;
+
+            /* Key: Set button dimensions to fit the bar and display 4 buttons */
+            /* Width: Ensure 4 buttons are displayed per page, considering side margins */
+            width: calc((100% - 2rem) / 4 - 1rem); /* (Container width - container padding) / 4 buttons - button's own margins */
+            /* Height: Maintain 4:7 aspect ratio (width:height) */
+            aspect-ratio: 4 / 7; /* Set aspect ratio to 4:7 (width:height) */
+            
+            /* Limit button's maximum height, ensuring it doesn't exceed the vertical space of the bottom bar */
+            /* Calculation:
+               20vh (Total Bar height)
+               - 1rem (Bar's top padding)
+               - 9px (text height)
+               - 0.5rem (text bottom margin)
+               - 0.5rem (buttons-container bottom padding)
+               - 4px (slider height)
+               - 0rem (slider bottom margin - now 0)
+            */
+            max-height: calc(20vh - 1rem - 9px - 0.5rem - 0.5rem - 4px);
+            min-height: 60px; /* Set minimum button height to prevent it from being too small on very narrow screens */
+        }
+
+        .button-wrapper:hover {
+            transform: translateY(-5px); /* Move slightly up on hover */
+        }
+
+        .button-wrapper img {
+            width: 100%;  /* Image width fills button container */
+            height: 100%; /* Image height fills button container */
+            object-fit: contain; /* Key: Ensure image is fully displayed within the button container, scaled proportionally, no cropping */
+            border-radius: 0.75rem; /* Image rounded corners */
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Image shadow */
+        }
+
+        /* Styles for the main content area of the page */
+        .main-content {
+            flex-grow: 1; /* Allow main content to take remaining space */
+            display: flex;
+            flex-direction: column; /* Stack children vertically */
+            align-items: center; /* Center horizontally */
+            text-align: center;
+            background-color: #ffffff; /* White background */
+            padding: 2rem;
+        }
+
+        /* Styles for the scroll indicator track */
+        .scroll-indicator-bar {
+            width: calc(100% - 2rem); /* Adjust width to match blessing text and button container side margins */
+            height: 4px; /* Thinner indicator height */
+            background-color: #e0e0e0; /* Light gray track background */
+            border-radius: 2px; /* Rounded corners */
+            margin-top: 0.25rem; /* Space between buttons and slider */
+            margin-bottom: 0; /* Key: No bottom margin, sticks to parent's bottom edge */
+            position: relative; /* Relative positioning for the slider thumb */
+            cursor: pointer; /* Cursor changes to pointer on hover */
+            margin-left: 1rem; /* Align with left side */
+            margin-right: 1rem; /* Align with right side */
+            flex-shrink: 0; /* Prevent slider from shrinking when space is limited */
+        }
+
+        /* Styles for the slider thumb */
+        .scroll-indicator-thumb {
+            height: 100%; /* Thumb height same as track */
+            width: 50px; /* Initial width, will be dynamically calculated by JS */
+            background-color: #007bff; /* Blue thumb */
+            border-radius: 2px; /* Rounded corners */
+            position: absolute; /* Absolute positioning to move within the track */
+            left: 0; /* Initial position */
+            top: 0; /* Align to top */
+            cursor: grab; /* Cursor changes to grab hand on hover */
+            transition: width 0.1s ease-out; /* Smooth transition for width changes */
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2); /* Thumb shadow */
+        }
+
+        .scroll-indicator-thumb:active {
+            cursor: grabbing; /* Cursor changes to grabbing hand when dragging */
+        }
+    </style>
+</head>
+<body>
+
+    <div class="main-content">
+        <h1 class="text-3xl font-bold text-gray-800 mb-8">網頁主要內容區域</h1>
+
+
+
+    </div>
+
+    <!-- Bottom horizontal sliding button bar -->
+    <div class="bottom-fixed-bar">
+        <!-- Blessing text -->
+        <div class="blessing-text">選擇祈福語句</div>
+
+        <!-- Button container for scrolling -->
+        <div class="buttons-container" id="buttonsContainer">
+            <!-- 12 buttons here -->
+            <!-- You can replace './btnT.png' with your image URLs -->
+            <button class="button-wrapper" aria-label="Button 1">
+                <img src="./btnT.png" alt="Button 1" onerror="this.onerror=null;this.src='https://placehold.co/80x140/cccccc/333333?text=Error';">
+            </button>
+            <button class="button-wrapper" aria-label="Button 2">
+                <img src="./btnT.png" alt="Button 2" onerror="this.onerror=null;this.src='https://placehold.co/80x140/cccccc/333333?text=Error';">
+            </button>
+            <button class="button-wrapper" aria-label="Button 3">
+                <img src="./btnT.png" alt="Button 3" onerror="this.onerror=null;this.src='https://placehold.co/80x140/cccccc/333333?text=Error';">
+            </button>
+            <button class="button-wrapper" aria-label="Button 4">
+                <img src="./btnT.png" alt="Button 4" onerror="this.onerror=null;this.src='https://placehold.co/80x140/cccccc/333333?text=Error';">
+            </button>
+            <button class="button-wrapper" aria-label="Button 5">
+                <img src="./btnT.png" alt="Button 5" onerror="this.onerror=null;this.src='https://placehold.co/80x140/cccccc/333333?text=Error';">
+            </button>
+            <button class="button-wrapper" aria-label="Button 6">
+                <img src="./btnT.png" alt="Button 6" onerror="this.onerror=null;this.src='https://placehold.co/80x140/cccccc/333333?text=Error';">
+            </button>
+            <button class="button-wrapper" aria-label="Button 7">
+                <img src="./btnT.png" alt="Button 7" onerror="this.onerror=null;this.src='https://placehold.co/80x140/cccccc/333333?text=Error';">
+            </button>
+            <button class="button-wrapper" aria-label="Button 8">
+                <img src="./btnT.png" alt="Button 8" onerror="this.onerror=null;this.src='https://placehold.co/80x140/cccccc/333333?text=Error';">
+            </button>
+            <button class="button-wrapper" aria-label="Button 9">
+                <img src="./btnT.png" alt="Button 9" onerror="this.onerror=null;this.src='https://placehold.co/80x140/cccccc/333333?text=Error';">
+            </button>
+            <button class="button-wrapper" aria-label="Button 10">
+                <img src="./btnT.png" alt="Button 10" onerror="this.onerror=null;this.src='https://placehold.co/80x140/cccccc/333333?text=Error';">
+            </button>
+            <button class="button-wrapper" aria-label="Button 11">
+                <img src="./btnT.png" alt="Button 11" onerror="this.onerror=null;this.src='https://placehold.co/80x140/cccccc/333333?text=Error';">
+            </button>
+            <button class="button-wrapper" aria-label="Button 12">
+                <img src="./btnT.png" alt="Button 12" onerror="this.onerror=null;this.src='https://placehold.co/80x140/cccccc/333333?text=Error';">
+            </button>
+        </div>
+
+        <!-- Scroll indicator track -->
+        <div class="scroll-indicator-bar" id="scrollIndicatorBar">
+            <!-- Slider thumb -->
+            <div class="scroll-indicator-thumb" id="scrollIndicatorThumb"></div>
+        </div>
+    </div>
+
+    <script>
+        // Get DOM elements
+        const buttonsContainer = document.getElementById('buttonsContainer');
+        const scrollIndicatorBar = document.getElementById('scrollIndicatorBar');
+        const scrollIndicatorThumb = document.getElementById('scrollIndicatorThumb');
+
+        let isDragging = false; // Flag to indicate if the slider is being dragged
+        let startX;             // Mouse X coordinate when dragging starts
+        let startThumbLeft;     // 'left' property value of the slider thumb when dragging starts
+
+        // --- Function: Update the position and size of the slider thumb ---
+        function updateScrollThumb() {
+            // If content cannot be scrolled, hide the slider
+            if (buttonsContainer.scrollWidth <= buttonsContainer.clientWidth) {
+                scrollIndicatorBar.style.display = 'none';
+                return;
+            } else {
+                scrollIndicatorBar.style.display = 'block';
+            }
+
+            // Calculate the width of the slider thumb
+            // The thumb's width should be proportional to the visible content
+            const thumbWidth = (buttonsContainer.clientWidth / buttonsContainer.scrollWidth) * scrollIndicatorBar.clientWidth;
+            scrollIndicatorThumb.style.width = `${thumbWidth}px`;
+
+            // Calculate the 'left' position of the slider thumb
+            // Scroll progress = current scroll position / maximum scrollable distance
+            const maxScrollLeft = buttonsContainer.scrollWidth - buttonsContainer.clientWidth;
+            const scrollPercentage = buttonsContainer.scrollLeft / maxScrollLeft;
+
+            // Maximum movement distance for the thumb = track width - thumb width
+            const maxThumbLeft = scrollIndicatorBar.clientWidth - scrollIndicatorThumb.offsetWidth;
+            const thumbLeft = scrollPercentage * maxThumbLeft;
+            scrollIndicatorThumb.style.left = `${thumbLeft}px`;
+        }
+
+        // --- Event Listener: Update slider thumb position and size when button container scrolls ---
+        buttonsContainer.addEventListener('scroll', updateScrollThumb);
+
+        // --- Event Listeners: Slider thumb dragging logic ---
+
+        // Mouse down event (start dragging)
+        scrollIndicatorThumb.addEventListener('mousedown', (e) => {
+            isDragging = true;
+            startX = e.clientX; // Record mouse X coordinate on press
+            startThumbLeft = scrollIndicatorThumb.offsetLeft; // Record current 'left' value of the thumb
+            scrollIndicatorThumb.style.cursor = 'grabbing'; // Change mouse cursor style
+            // Prevent default drag behavior (e.g., image dragging)
+            e.preventDefault();
+        });
+
+        // Mouse move event (while dragging) - Listen on document so dragging continues even if mouse leaves thumb
+        document.addEventListener('mousemove', (e) => {
+            if (!isDragging) return;
+
+            // Calculate mouse movement distance
+            const dx = e.clientX - startX;
+            // Calculate new 'left' position for the thumb
+            let newThumbLeft = startThumbLeft + dx;
+
+            // Restrict thumb movement within the track
+            const maxThumbLeft = scrollIndicatorBar.clientWidth - scrollIndicatorThumb.offsetWidth;
+            newThumbLeft = Math.max(0, Math.min(newThumbLeft, maxThumbLeft));
+
+            // Update the 'left' style of the thumb
+            scrollIndicatorThumb.style.left = `${newThumbLeft}px`;
+
+            // Map the thumb's position to the scroll position of the button container
+            const scrollPercentage = newThumbLeft / maxThumbLeft;
+            const maxScrollLeft = buttonsContainer.scrollWidth - buttonsContainer.clientWidth;
+            buttonsContainer.scrollLeft = scrollPercentage * maxScrollLeft;
+        });
+
+        // Mouse up event (end dragging) - Listen on document
+        document.addEventListener('mouseup', () => {
+            isDragging = false;
+            scrollIndicatorThumb.style.cursor = 'grab'; // Restore mouse cursor style
+        });
+
+        // --- Event Listener: Click on scroll track to move slider thumb ---
+        scrollIndicatorBar.addEventListener('click', (e) => {
+            // Ensure it's not a click on the thumb itself
+            if (e.target === scrollIndicatorThumb) return;
+
+            const barRect = scrollIndicatorBar.getBoundingClientRect();
+            const clickX = e.clientX - barRect.left; // Click position relative to the left of the track
+
+            // Calculate new center position for the thumb
+            let newThumbLeft = clickX - (scrollIndicatorThumb.offsetWidth / 2);
+
+            // Restrict thumb within the track
+            const maxThumbLeft = scrollIndicatorBar.clientWidth - scrollIndicatorThumb.offsetWidth;
+            newThumbLeft = Math.max(0, Math.min(newThumbLeft, maxThumbLeft));
+
+            // Update thumb position
+            scrollIndicatorThumb.style.left = `${newThumbLeft}px`;
+
+            // Map thumb position to button container scroll position
+            const scrollPercentage = newThumbLeft / maxThumbLeft;
+            const maxScrollLeft = buttonsContainer.scrollWidth - buttonsContainer.clientWidth;
+            buttonsContainer.scrollLeft = scrollPercentage * maxScrollLeft;
+        });
+
+
+        // --- Initialization: Update slider on page load and window resize ---
+        window.onload = updateScrollThumb;
+        window.addEventListener('resize', updateScrollThumb);
+
+        // Handle touch events for mobile dragging support
+        let touchStartX;
+        let touchStartThumbLeft;
+        let isTouchDragging = false;
+
+        // Add { passive: false } to touchstart and touchmove listeners to prevent Intervention warning
+        scrollIndicatorThumb.addEventListener('touchstart', (e) => {
+            isTouchDragging = true;
+            touchStartX = e.touches[0].clientX;
+            touchStartThumbLeft = scrollIndicatorThumb.offsetLeft;
+            e.preventDefault(); // Prevent default scrolling behavior
+        }, { passive: false }); // Key: Set passive to false
+
+        document.addEventListener('touchmove', (e) => {
+            if (!isTouchDragging) return;
+
+            const dx = e.touches[0].clientX - touchStartX;
+            let newThumbLeft = touchStartThumbLeft + dx;
+
+            const maxThumbLeft = scrollIndicatorBar.clientWidth - scrollIndicatorThumb.offsetWidth;
+            newThumbLeft = Math.max(0, Math.min(newThumbLeft, maxThumbLeft));
+
+            scrollIndicatorThumb.style.left = `${newThumbLeft}px`;
+
+            const scrollPercentage = newThumbLeft / maxThumbLeft;
+            const maxScrollLeft = buttonsContainer.scrollWidth - buttonsContainer.clientWidth;
+            buttonsContainer.scrollLeft = scrollPercentage * maxScrollLeft;
+            e.preventDefault(); // Prevent default scrolling behavior
+        }, { passive: false }); // Key: Set passive to false
+
+        document.addEventListener('touchend', () => {
+            isTouchDragging = false;
+        });
+
+    </script>
+
+</body>
+</html>

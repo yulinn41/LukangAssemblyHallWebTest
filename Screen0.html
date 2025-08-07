@@ -1,0 +1,927 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>11111式</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            height: calc(var(--vh, 1vh) * 100);
+            box-sizing: border-box;
+            overflow: hidden;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+
+        .screen {
+            display: none;
+            width: 100%;
+            height: 100%;
+            box-sizing: border-box;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: center;
+            overflow-y: auto;
+            padding-top: env(safe-area-inset-top);
+            padding-bottom: env(safe-area-inset-bottom);
+        }
+
+        .screen.active {
+            display: flex;
+        }
+
+        /* --- Styles for screen0 (Pape1.html content) --- */
+        .main-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            max-width: 600px;
+            padding: 0 1rem;
+            box-sizing: border-box;
+            height: 100%;
+            justify-content: space-between;
+            overflow-y: auto;
+        }
+
+        .logo-section {
+            text-align: center;
+            width: 100%;
+            flex-shrink: 0;
+            padding-top: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .logo-image {
+            max-width: 45%;
+            height: auto;
+            display: block;
+            margin: 0 auto;
+        }
+
+        .visual-content-card {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            flex-grow: 1;
+            box-sizing: border-box;
+            width: 100%;
+            background-color: rgba(156, 163, 175, 0.1);
+            padding: 0rem 1rem 0rem 1rem;
+            gap: 0rem;
+            position: relative;
+        }
+
+        .image-display-section {
+            width: 50%;
+        }
+
+        .responsive-image {
+            max-width: 100%;
+            max-height: 100%;
+            height: auto;
+            object-fit: contain;
+            display: block;
+            border-radius: 0.5rem;
+        }
+
+        .next-step-button-row {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            box-sizing: border-box;
+            padding: 0 2rem;
+            background-color: rgba(156, 163, 255, 0.1);
+
+        }
+
+        .next-step-button {
+            background-color: #f97316;
+            color: #ffffff;
+            border: 3px solid #ffffff;
+            border-radius: 0.8rem;
+            padding: 0.2rem 0.5rem;
+            font-size: 0.8rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.2s, border-color 0.2s, transform 0.1s;
+            outline: none;
+            width: fit-content;
+
+            margin-top: -0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .next-step-button.next {
+            margin-left: auto;
+            margin-right: 0;
+
+        }
+
+        .next-step-button.back {
+            margin-left: 0;
+            margin-right: auto;
+
+        }
+
+        .next-step-button:hover {
+            background-color: #ea580c;
+            border-color: #e5e7eb;
+            transform: scale(1.02);
+        }
+
+        .next-step-button:active {
+            transform: scale(0.98);
+        }
+
+        .style-selection-bar {
+            flex-shrink: 0;
+            height: 20%;
+            width: 100%;
+            background-color: transparent;
+            box-shadow: none;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        .style-content-wrapper {
+            display: inline-flex;
+            align-items: flex-end;
+            flex-wrap: wrap;
+            position: relative;
+            padding-bottom: 0.5rem;
+            justify-content: flex-start;
+        }
+
+        .style-label {
+            font-size: 12px;
+            color: #9ca3af;
+            margin-right: 0.5rem;
+            flex-shrink: 0;
+        }
+
+        .style-buttons-container {
+            display: flex;
+            gap: 0.5rem;
+            flex-shrink: 0;
+            flex-wrap: wrap;
+        }
+
+        .style-button {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background-color: transparent;
+            border: 5px solid rgba(156, 163, 175, 0.5);
+            color: #9ca3af;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.2s, border-color 0.2s, color 0.2s, transform 0.1s;
+            outline: none;
+        }
+
+        .style-button:hover {
+            background-color: rgba(156, 163, 175, 0.1);
+            border-color: rgba(156, 163, 175, 0.8);
+            color: #e5e7eb;
+        }
+
+        .style-button:active {
+            transform: scale(0.95);
+        }
+
+        .style-button.selected {
+            background-color: #9ca3af;
+            color: #111;
+            border-color: #9ca3af;
+        }
+
+        .style-underline {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background-color: #9ca3af;
+            border-radius: 1px;
+        }
+
+        /*----------------------------------------2*/
+        .bottom-content-section {
+            background-color: #f0f0f0;
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.8);
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: flex-start;
+            padding: 1rem 1rem 0;
+            border-radius: 2rem 2rem 0 0;
+            box-sizing: border-box;
+            flex-shrink: 0;
+            overflow: hidden;
+            flex-shrink: 0;
+            height: 20%;
+            min-height: 180px;
+            width: 100%;
+        }
+
+        .bottom-content-section .blessing-text {
+            font-size: 9px;
+            color: #6b7280;
+            margin-bottom: 0.5rem;
+            padding: 0 1rem;
+            width: 100%;
+            text-align: left;
+            flex-shrink: 0;
+            box-sizing: border-box;
+        }
+
+        .bottom-content-section .buttons-container {
+            display: flex;
+            align-items: center;
+            overflow-x: scroll;
+            -webkit-overflow-scrolling: touch;
+            white-space: nowrap;
+            width: 100%;
+            flex-grow: 1;
+            height: auto;
+            padding: 0 0 0.5rem 0;
+            scroll-snap-type: x mandatory;
+            scroll-padding-left: 0.5rem;
+            scroll-padding-right: 0.5rem;
+            box-sizing: border-box;
+            gap: 0.5rem;
+        }
+
+        .bottom-content-section .buttons-container::-webkit-scrollbar {
+            display: none;
+        }
+
+        .bottom-content-section .buttons-container {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        /* 燈籠按鈕容器的樣式 */
+        .bottom-content-section .button-wrapper {
+            flex-shrink: 0;
+            width: 100px;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+            background: none;
+            border: none;
+            padding: 0;
+            cursor: pointer;
+            transform: rotate(-7deg)scale(0.9);
+            /* 預設旋轉角度 */
+            scroll-snap-align: center;
+            /* 滾動時置中 */
+            transition: transform 0.3s ease;
+            /* 修正: 轉換效果放在基底類別，確保所有狀態變更都有動畫 */
+        }
+
+        /* 滑鼠懸停與選中時的動態效果 */
+        .bottom-content-section .button-wrapper.selected,
+        .bottom-content-section .button-wrapper:hover {
+            transform: rotate(0deg) scale(1);
+        }
+
+        /* 燈籠按鈕內部的區塊樣式 */
+        .lantern-cap {
+            width: 30%;
+            height: 10%;
+            background-color: rgba(255, 255, 255, 0.5);
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgb(0, 0, 0, 0.1);
+        }
+
+        .lantern-text-area {
+            width: 80%;
+            /* 調整後的寬度 */
+            max-height: 8rem;
+            background-color: rgba(255, 255, 255, 0.5);
+            border-radius: 25px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+            flex-direction: column;
+            flex-grow: 1;
+            flex-shrink: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 0.3rem;
+            text-align: center;
+            word-break: break-word;
+        }
+
+        .lantern-text {
+            font-size: clamp(0.9rem, 2vh, 1.5rem);
+            /* 最小字, 依視窗寬比例, 最大字 */
+            /* 調整文字大小以適應按鈕 */
+            font-weight: 500;
+            color: #4a4a4a;
+            text-shadow: 1px 1px 2px rgba(207, 207, 207, 0.3);
+            line-height: 1.2;
+            margin: 0;
+            padding: 0;
+        }
+
+        .bottom-content-section .scroll-indicator-bar {
+            width: 100%;
+            height: 4px;
+            background-color: #e0e0e0;
+            border-radius: 2px;
+            margin-top: 0.25rem;
+            position: relative;
+            cursor: pointer;
+            box-sizing: border-box;
+        }
+
+        .scroll-indicator-thumb {
+            height: 100%;
+            width: 50px;
+            background-color: #012954;
+            border-radius: 2px;
+            position: absolute;
+            left: 0;
+            top: 0;
+            cursor: grab;
+            transition: width 0.1s ease-out;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+        }
+
+        .scroll-indicator-thumb:active {
+            cursor: grabbing;
+        }
+
+
+        .overlay-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-size: 24px;
+            font-weight: bold;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .overlay-text p {
+            margin: 0;
+            padding: 0;
+        }
+
+        /*----------------------------------3*/
+        .screen2-selection-bar {
+            flex-shrink: 0;
+            height: 40%;
+            width: 100%;
+            background-color: transparent;
+            box-shadow: none;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 0;
+            box-sizing: border-box;
+            padding-top: 1rem;
+            gap: 0.5rem;
+        }
+
+        .screen3-selection-bar {
+            flex-shrink: 0;
+            height: 40%;
+            width: 100%;
+            background-color: transparent;
+            box-shadow: none;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 0;
+            box-sizing: border-box;
+            padding-top: 1rem;
+            padding-bottom: 3rem;
+            justify-content: space-between;
+        }
+
+        .screen2-button {
+            background-color: #f97316;
+            color: #ffffff;
+            border: 3px solid #ffffff;
+            border-radius: 0.8rem;
+            padding: 0.2rem 0.5rem;
+            font-size: 0.8rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.2s, border-color 0.2s, transform 0.1s;
+            outline: none;
+            width: fit-content;
+            margin: 0.5rem;
+        }
+
+        /* 新增的 CSS 規則 */
+        .text-contenter {
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 0 3rem;
+        }
+
+        .text-title {
+            color: #F2931A;
+            font-weight: bold;
+            font-size: 1.125rem;
+            letter-spacing: 2px;
+        }
+
+        .text-subtitle {
+            color: #ffffff;
+            font-size: 1rem;
+            letter-spacing: 1px;
+
+        }
+
+        .text-subtitle-screen3 {
+            color: #ffffff;
+            font-size: 1rem;
+            letter-spacing: 2px;
+
+        }
+
+        .nickname-input {
+            padding: 0.5rem 1rem;
+            border: 1px solid #d1d5db;
+            border-radius: 0.375rem;
+            color: #1f2937;
+            width: 100%;
+            max-width: 250px;
+            margin-top: 0.5rem;
+
+        }
+    </style>
+</head>
+
+<body>
+    <div id="screen0" class="screen active">
+        <div class="main-container">
+            <div class="logo-section">
+                <img src="./logo.png" alt="專案 Logo" class="logo-image">
+            </div>
+
+            <div class="visual-content-card">
+                <img id="displayImage0" src="./Latern1.png" alt="選擇的樣式圖片" class="responsive-image">
+            </div>
+        </div>
+        <div class="next-step-button-row">
+            <button class="next-step-button next" data-target-screen="1">下一步</button>
+        </div>
+        <div class="style-selection-bar">
+            <div class="style-content-wrapper">
+                <div class="style-label">選擇樣式</div>
+                <div class="style-buttons-container" id="styleButtonsContainer0">
+                    <button class="style-button selected" data-style="1">1</button>
+                    <button class="style-button" data-style="2">2</button>
+                    <button class="style-button" data-style="3">3</button>
+                    <button class="style-button" data-style="4">4</button>
+                    <button class="style-button" data-style="5">5</button>
+                </div>
+                <div class="style-underline"></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="screen1" class="screen ">
+        <div class="main-container">
+            <div class="logo-section">
+                <img src="./logo.png" alt="專案 Logo" class="logo-image">
+            </div>
+
+            <div class="visual-content-card">
+                <img id="displayImage1" src="./Latern1.png" alt="選擇的樣式圖片" class="responsive-image">
+ <img id="overlayImage" src="./LaternText1.png" alt="祝福語圖片" class="responsive-image" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">
+            </div>
+        </div>
+        <div class="next-step-button-row">
+            <button class="next-step-button back" data-target-screen="0">上一步</button>
+            <button class="next-step-button next" data-target-screen="2">下一步</button>
+        </div>
+
+        <div class="bottom-content-section">
+            <div class="blessing-text">選擇祈福語句</div>
+            <!-- 這個 div 將由 JavaScript 填充按鈕 -->
+            <div class="buttons-container" id="buttonsContainer1">
+            </div>
+            <div class="scroll-indicator-bar" id="scrollIndicatorBar1">
+                <div class="scroll-indicator-thumb" id="scrollIndicatorThumb1"></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="screen2" class="screen">
+        <div class="main-container">
+            <div class="logo-section">
+                <img src="./logo.png" alt="專案 Logo" class="logo-image">
+            </div>
+            <div class="visual-content-card">
+                <img id="displayImage2" src="./Latern1.png" alt="選擇的樣式圖片" class="responsive-image">
+ <img id="overlayImage2" src="./LaternText1.png" alt="祝福語圖片" class="responsive-image" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">
+            </div>
+            <div class="screen2-selection-bar">
+                <div class="text-contenter">
+                    <p class="text-title">燈籠繪製完成!</p>
+                    <p class="text-subtitle">現在，簽下你的個性暱稱，它將成為獨一無二的燈籠!</p>
+                    <input type="text" placeholder="彰化彭于晏" class="nickname-input">
+                </div>
+                <div class="next-step-button-row">
+                    <button class="screen2-button" data-target-screen="1">上一步</button>
+                    <button class="screen2-button " data-target-screen="3">上傳</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="screen3" class="screen">
+        <div class="main-container">
+            <div class="logo-section">
+                <img src="./logo.png" alt="專案 Logo" class="logo-image">
+            </div>
+            <div class="visual-content-card">
+                <img id="displayImage3" src="./Latern1.png" alt="選擇的樣式圖片" class="responsive-image">
+                 <img id="overlayImage3" src="./LaternText1.png" alt="祝福語圖片" class="responsive-image" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">
+            </div>
+            <div class="screen3-selection-bar">
+                <div class="text-contenter">
+                    <p class="text-title">燈籠上傳完成!</p>
+                    <p class="text-subtitle-screen3">您的專屬燈籠預計在<br>00:00後<br>將顯示於光雕牆上</p>
+                </div>
+                <div class="next-step-button-row">
+                    <button class="screen2-button" data-target-screen="0">回首頁</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+      // ------------ 全域函式 ------------
+
+// 更新背景圖
+function updateBackgroundImage() {
+    const body = document.body;
+    if (window.innerWidth <= 768) {
+        body.style.backgroundImage = "url('pic/BG3.png')";
+    } else if (window.innerWidth <= 1023) {
+        body.style.backgroundImage = "url('pic/BG2.png')";
+    } else {
+        body.style.backgroundImage = "url('pic/BG1.png')";
+    }
+}
+
+// 更新滑動指示條
+function updateScrollThumb() {
+    const buttonsContainer1 = document.getElementById('buttonsContainer1');
+    const scrollIndicatorBar1 = document.getElementById('scrollIndicatorBar1');
+    const scrollIndicatorThumb1 = document.getElementById('scrollIndicatorThumb1');
+
+    if (!buttonsContainer1 || !scrollIndicatorBar1 || !scrollIndicatorThumb1) return;
+
+    if (buttonsContainer1.scrollWidth <= buttonsContainer1.clientWidth) {
+        scrollIndicatorBar1.style.display = 'none';
+        return;
+    } else {
+        scrollIndicatorBar1.style.display = 'block';
+    }
+
+    const thumbWidth = (buttonsContainer1.clientWidth / buttonsContainer1.scrollWidth) * scrollIndicatorBar1.clientWidth;
+    scrollIndicatorThumb1.style.width = `${thumbWidth}px`;
+
+    const maxScrollLeft = buttonsContainer1.scrollWidth - buttonsContainer1.clientWidth;
+    const scrollPercentage = buttonsContainer1.scrollLeft / maxScrollLeft;
+    const maxThumbLeft = scrollIndicatorBar1.clientWidth - scrollIndicatorThumb1.offsetWidth;
+    const thumbLeft = scrollPercentage * maxThumbLeft;
+    scrollIndicatorThumb1.style.left = `${thumbLeft}px`;
+}
+
+// 初始化（初次與 resize 觸發）
+function initialize() {
+    updateBackgroundImage();
+    updateScrollThumb();
+}
+
+// ------------ 主邏輯：畫面載入後 ------------
+
+document.addEventListener('DOMContentLoaded', () => {
+    // 處理 vh 單位問題
+    const setVh = () => {
+        let vh = window.innerHeight * 0.01;
+        document.documentElement.style.setProperty('--vh', `${vh}px`);
+    };
+    setVh();
+    window.addEventListener('resize', setVh);
+    window.addEventListener('orientationchange', setVh);
+
+    const buttonsContainer = document.getElementById('buttonsContainer1');
+    const overlayImage = document.getElementById('overlayImage');
+    const scrollIndicatorBar1 = document.getElementById('scrollIndicatorBar1');
+    const scrollIndicatorThumb1 = document.getElementById('scrollIndicatorThumb1');
+
+    const blessings = [
+        '地表最強', '彰化94讚', '控霸奔', '有彰力', '甲霸丸', '幸福平安',
+        '健康', '快樂', '賺大錢', '金榜題名', '事事如意', '心想事成'
+    ];
+
+const imageMap = {
+    '地表最強': './LaternText1.png',
+    '彰化94讚': './LaternText2.png',
+    '控霸奔': './LaternText3.png',
+    '有彰力': './LaternText4.png',
+    '甲霸丸': './LaternText5.png',
+    '幸福平安': './LaternText6.png',
+    '健康': './LaternText7.png',
+    '快樂': './LaternText8.png',
+    '賺大錢': './LaternText9.png',
+    '金榜題名': './LaternText10.png',
+    '事事如意': './LaternText11.png',
+    '心想事成': './LaternText12.png'
+};
+
+function updateOverlayImage(blessing) {
+    const newImageSrc = imageMap[blessing];
+    if (!newImageSrc) {
+        console.warn(`❗ 無對應圖片：${blessing}`);
+        return;
+    }
+
+    // 更新 screen1 原本的
+    overlayImage.src = newImageSrc;
+
+    // 同步更新 screen2 和 screen3
+    const overlayImage2 = document.getElementById('overlayImage2');
+    const overlayImage3 = document.getElementById('overlayImage3');
+    if (overlayImage2) overlayImage2.src = newImageSrc;
+    if (overlayImage3) overlayImage3.src = newImageSrc;
+}
+
+
+updateOverlayImage(blessings[0]);
+
+    // 動態生成按鈕
+    blessings.forEach(blessing => {
+        const buttonWrapper = document.createElement('button');
+        buttonWrapper.classList.add('button-wrapper');
+        buttonWrapper.dataset.text = blessing;
+        buttonWrapper.dataset.image = imageMap[blessing];
+
+        const capTop = document.createElement('div');
+        capTop.classList.add('lantern-cap');
+
+        const textArea = document.createElement('div');
+        textArea.classList.add('lantern-text-area');
+
+        const characters = (blessing === '彰化94讚') ? ['彰', '化', '94', '讚'] : blessing.split('');
+        characters.forEach(char => {
+            const p = document.createElement('p');
+            p.classList.add('lantern-text');
+            p.textContent = char;
+            textArea.appendChild(p);
+        });
+
+        const capBottom = document.createElement('div');
+        capBottom.classList.add('lantern-cap');
+
+        buttonWrapper.appendChild(capTop);
+        buttonWrapper.appendChild(textArea);
+        buttonWrapper.appendChild(capBottom);
+
+        buttonsContainer.appendChild(buttonWrapper);
+    });
+
+    // 事件委派點擊按鈕
+    buttonsContainer.addEventListener('click', (event) => {
+        const clickedButton = event.target.closest('.button-wrapper');
+        if (!clickedButton) return;
+
+        document.querySelectorAll('.button-wrapper').forEach(btn => btn.classList.remove('selected'));
+        clickedButton.classList.add('selected');
+
+        const blessing = clickedButton.dataset.text;
+        const image = clickedButton.dataset.image;
+
+        updateOverlayImage(blessing);
+        overlayImage.src = image;
+    });
+
+    // 滑動事件
+    if (buttonsContainer) {
+        buttonsContainer.addEventListener('scroll', updateScrollThumb);
+    }
+
+    // 滑動條拖曳
+    let isDragging = false, startX, startThumbLeft;
+    let isTouchDragging = false, touchStartX, touchStartThumbLeft;
+
+    if (scrollIndicatorThumb1) {
+        scrollIndicatorThumb1.addEventListener('mousedown', (e) => {
+            isDragging = true;
+            startX = e.clientX;
+            startThumbLeft = scrollIndicatorThumb1.offsetLeft;
+            scrollIndicatorThumb1.style.cursor = 'grabbing';
+            e.preventDefault();
+        });
+
+        scrollIndicatorThumb1.addEventListener('touchstart', (e) => {
+            isTouchDragging = true;
+            touchStartX = e.touches[0].clientX;
+            touchStartThumbLeft = scrollIndicatorThumb1.offsetLeft;
+            e.preventDefault();
+        }, { passive: false });
+    }
+
+    document.addEventListener('mousemove', (e) => {
+        if (!isDragging) return;
+        const dx = e.clientX - startX;
+        moveThumb(dx);
+    });
+
+    document.addEventListener('mouseup', () => {
+        isDragging = false;
+        if (scrollIndicatorThumb1) {
+            scrollIndicatorThumb1.style.cursor = 'grab';
+        }
+    });
+
+    document.addEventListener('touchmove', (e) => {
+        if (!isTouchDragging) return;
+        const dx = e.touches[0].clientX - touchStartX;
+        moveThumb(dx);
+        e.preventDefault();
+    }, { passive: false });
+
+    document.addEventListener('touchend', () => {
+        isTouchDragging = false;
+    });
+
+    function moveThumb(dx) {
+        const maxThumbLeft = scrollIndicatorBar1.clientWidth - scrollIndicatorThumb1.offsetWidth;
+        let newThumbLeft = (isDragging ? startThumbLeft : touchStartThumbLeft) + dx;
+        newThumbLeft = Math.max(0, Math.min(newThumbLeft, maxThumbLeft));
+        scrollIndicatorThumb1.style.left = `${newThumbLeft}px`;
+        const scrollPercentage = newThumbLeft / maxThumbLeft;
+        const maxScrollLeft = buttonsContainer.scrollWidth - buttonsContainer.clientWidth;
+        buttonsContainer.scrollLeft = scrollPercentage * maxScrollLeft;
+    }
+
+    scrollIndicatorBar1.addEventListener('click', (e) => {
+        if (e.target === scrollIndicatorThumb1) return;
+        const barRect = scrollIndicatorBar1.getBoundingClientRect();
+        const clickX = e.clientX - barRect.left;
+        let newThumbLeft = clickX - (scrollIndicatorThumb1.offsetWidth / 2);
+        const maxThumbLeft = scrollIndicatorBar1.clientWidth - scrollIndicatorThumb1.offsetWidth;
+        newThumbLeft = Math.max(0, Math.min(newThumbLeft, maxThumbLeft));
+        scrollIndicatorThumb1.style.left = `${newThumbLeft}px`;
+        const scrollPercentage = newThumbLeft / maxThumbLeft;
+        const maxScrollLeft = buttonsContainer.scrollWidth - buttonsContainer.clientWidth;
+        buttonsContainer.scrollLeft = scrollPercentage * maxScrollLeft;
+    });
+
+    // 初始化滑動條與背景圖
+    updateScrollThumb();
+    updateBackgroundImage();
+});
+
+window.addEventListener('load', initialize);
+window.addEventListener('resize', initialize);
+// 處理所有「下一步」按鈕的事件
+document.addEventListener('DOMContentLoaded', () => {
+    // 選取所有 data-target-screen 屬性的按鈕
+    const allNextButtons = document.querySelectorAll('[data-target-screen]');
+
+    allNextButtons.forEach(button => {
+        button.addEventListener('click', (e) => {
+            const targetScreenId = e.currentTarget.dataset.targetScreen;
+            if (targetScreenId === 'end') {
+                alert('流程結束！');
+                return;
+            }
+            // Get the selected style before switching
+            const selectedStyle = document.querySelector('#screen0 .style-button.selected')?.dataset.style || '1';
+
+            // Pass both the target ID and the selected style to the switchScreen function
+            switchScreen(targetScreenId, selectedStyle);
+        });
+    });
+
+    const styleButtons = document.querySelectorAll('#screen0 .style-button');
+    const displayImage0 = document.getElementById('displayImage0');
+
+    styleButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            styleButtons.forEach(btn => btn.classList.remove('selected'));
+            button.classList.add('selected');
+            const styleNumber = parseInt(button.dataset.style);
+            currentSelectedStyle = styleNumber;
+            updateImage(displayImage0, currentSelectedStyle);
+        });
+    });
+    updateImage(displayImage0, currentSelectedStyle);
+});
+
+function switchScreen(targetId, selectedStyle) {
+    const screens = document.querySelectorAll('.screen');
+    screens.forEach(screen => {
+        screen.classList.remove('active');
+        screen.style.display = 'none';
+    });
+
+    const target = document.querySelector(`#screen${targetId}`);
+    if (target) {
+        target.classList.add('active');
+        target.style.display = 'flex';
+
+        // Correct conditional to use targetId (string) instead of target (element)
+        if (targetId === '1') {
+            const displayImage1 = document.getElementById('displayImage1');
+            // Pass the selectedStyle to updateImage on screen1
+            updateImage(displayImage1, selectedStyle);
+            // This is a placeholder for your existing updateScrollThumb logic
+            // setTimeout(updateScrollThumb, 50);
+        }
+          // ✅ 新增：如果回到 screen0，則重設 blessings 為第 0 個（地表最強）
+        if (targetId === '0') {
+            const overlayImage = document.getElementById('overlayImage');
+            const overlayImage2 = document.getElementById('overlayImage2');
+            const overlayImage3 = document.getElementById('overlayImage3');
+
+            const defaultBlessing = '地表最強';
+            const defaultImage = imageMap[defaultBlessing];
+
+            overlayImage.src = defaultImage;
+            if (overlayImage2) overlayImage2.src = defaultImage;
+            if (overlayImage3) overlayImage3.src = defaultImage;
+
+            // 同時取消所有 selected 樣式
+            document.querySelectorAll('.button-wrapper').forEach(btn => btn.classList.remove('selected'));
+
+            // 把第一個 button-wrapper 加上 selected 樣式
+            const firstButton = document.querySelector('.button-wrapper[data-text="地表最強"]');
+            if (firstButton) firstButton.classList.add('selected');
+        }
+    }
+}
+
+
+const imageUrls = {
+    1: "./Latern1.png",
+    2: "./Latern2.png",
+    3: "./Latern3.png",
+    4: "./Latern4.png",
+    5: "./Latern5.png"
+};
+
+const updateImage = (imgElement, styleNumber) => {
+    if (imgElement && imageUrls[styleNumber]) {
+        imgElement.src = imageUrls[styleNumber];
+        console.log(`Selected style: ${styleNumber}. Image updated on ${imgElement.id}.`);
+
+        // 同步更新 screen2 和 screen3
+        const displayImage2 = document.getElementById('displayImage2');
+        const displayImage3 = document.getElementById('displayImage3');
+        if (displayImage2) displayImage2.src = imageUrls[styleNumber];
+        if (displayImage3) displayImage3.src = imageUrls[styleNumber];
+    } else {
+        console.warn(`Image element not found or invalid style number: ${styleNumber}.`);
+    }
+};
+
+let currentSelectedStyle = 1;
+    </script>
+
+
+</body>
+
+</html>

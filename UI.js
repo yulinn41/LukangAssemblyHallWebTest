@@ -30,7 +30,6 @@ const styleImageMap = {
 let currentSelectedStyle = 1;
 let currentSelectedBlessing = blessings[0];
 
-
 // ------------ 全域函式 ------------
 
 function updateBackgroundImage() {
@@ -278,28 +277,49 @@ function setupStyleButtons() {
     const firstStyleButton = document.querySelector('#screen0 .style-button');
     if (firstStyleButton) firstStyleButton.classList.add('selected');
 }
-
 function switchScreen(targetId) {
     const screens = document.querySelectorAll('.screen');
-    screens.forEach(screen => {
-        screen.classList.remove('active');
-        screen.style.display = 'none';
-    });
-
-    const target = document.querySelector(`#screen${targetId}`);
-    if (target) {
-        target.classList.add('active');
-        target.style.display = 'flex';
-        
-        // 切換畫面時，同步更新圖片
-        updateDisplayImage();
-        updateOverlayImage();
-
-        if (targetId === '0') {
-            resetBlessingToDefault();
-            resetStyleToDefault();
-        }
+    const bottomContent = document.querySelector('.bottom-content-section');
+    const currentScreenId = document.querySelector('.screen.active')?.id;
+    
+    // 如果從 screen1 離開，先執行滑出動畫
+    let animationOutPromise;
+    if (currentScreenId === 'screen1' && bottomContent) {
+        bottomContent.classList.remove('show');
+        animationOutPromise = new Promise(resolve => setTimeout(resolve, 500));
+    } else {
+        animationOutPromise = Promise.resolve();
     }
+
+    animationOutPromise.then(() => {
+        // 隱藏所有畫面，並顯示目標畫面
+        screens.forEach(screen => {
+            screen.classList.remove('active');
+            screen.style.display = 'none';
+        });
+
+        const target = document.querySelector(`#screen${targetId}`);
+        if (target) {
+            target.classList.add('active');
+            target.style.display = 'flex';
+            
+            updateDisplayImage();
+            updateOverlayImage();
+
+            // 如果目標畫面是 screen1，則執行滑入動畫
+            if (targetId === '1' && bottomContent) {
+                // 在新增 .show class 之前，強制瀏覽器重繪，以確保初始狀態被正確渲染
+                bottomContent.offsetHeight; 
+                bottomContent.classList.add('show');
+            }
+            
+            // 如果切回 screen0，重設所有狀態
+            if (targetId === '0') {
+                resetBlessingToDefault();
+                resetStyleToDefault();
+            }
+        }
+    });
 }
 
 // ------------ 主邏輯：畫面載入後 ------------

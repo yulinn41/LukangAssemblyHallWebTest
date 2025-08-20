@@ -91,7 +91,15 @@ function updateOverlayImage() {
         if (img) img.src = newImageSrc;
     });
 }
+// ... (其他全域變數) ...
 
+const styleColorsMap = {
+    1: { bgColor: '#10334D', borderColor: 'linear-gradient( to right,#EBBB94,#EBBB94)', textColor: '#EBBB94' },
+    2: { bgColor: 'transparent', borderColor: 'linear-gradient( to right, #EA9841, #ECB74B)', textColor: '#F7E5BE' },
+    3: { bgColor: '#F6CA61', borderColor: 'linear-gradient( to right,#904b72,#904b72)', textColor: '#0C4D50' },
+    4: { bgColor: 'rgba(81, 0, 0, 0.5)', borderColor: 'linear-gradient(to right, #EA9841, #ECB74B)', textColor: '#F7E5BE' },
+    5: { bgColor: '#1C474E', borderColor: 'linear-gradient(to right,#EBBB94,#EBBB94)', textColor: '#EBBB94' }
+};
 function updateDisplayImage() {
     const styleNumber = currentSelectedStyle;
     const newImageSrc = styleImageMap[styleNumber];
@@ -111,6 +119,15 @@ function updateDisplayImage() {
     displayImageElements.forEach(img => {
         if (img) img.src = newImageSrc;
     });
+
+    // --- 新增的程式碼：根據樣式更新顏色 ---
+    const colors = styleColorsMap[styleNumber];
+    if (colors) {
+        document.documentElement.style.setProperty('--nickname-bg-color', colors.bgColor);
+        document.documentElement.style.setProperty('--nickname-border-color', colors.borderColor);
+        document.documentElement.style.setProperty('--nickname-text-color', colors.textColor);
+    }
+
 }
 
 
@@ -277,11 +294,17 @@ function setupStyleButtons() {
     const firstStyleButton = document.querySelector('#screen0 .style-button');
     if (firstStyleButton) firstStyleButton.classList.add('selected');
 }
+
+
+
+
+// ... (其他函式) ...
+
 function switchScreen(targetId) {
     const screens = document.querySelectorAll('.screen');
     const bottomContent = document.querySelector('.bottom-content-section');
     const currentScreenId = document.querySelector('.screen.active')?.id;
-    
+
     // 如果從 screen1 離開，先執行滑出動畫
     let animationOutPromise;
     if (currentScreenId === 'screen1' && bottomContent) {
@@ -302,22 +325,49 @@ function switchScreen(targetId) {
         if (target) {
             target.classList.add('active');
             target.style.display = 'flex';
-            
+
             updateDisplayImage();
             updateOverlayImage();
 
             // 如果目標畫面是 screen1，則執行滑入動畫
             if (targetId === '1' && bottomContent) {
                 // 在新增 .show class 之前，強制瀏覽器重繪，以確保初始狀態被正確渲染
-                bottomContent.offsetHeight; 
+                bottomContent.offsetHeight;
                 bottomContent.classList.add('show');
             }
-            
+
             // 如果切回 screen0，重設所有狀態
             if (targetId === '0') {
                 resetBlessingToDefault();
                 resetStyleToDefault();
             }
+            // Handle nickname transfer and display
+
+            // 處理從 screen2 到 screen3 的暱稱傳輸
+            if (currentScreenId === 'screen2' && targetId === '3') {
+                const nicknameInput = document.querySelector('.nickname-input');
+                if (nicknameInput) {
+                    userNickname = nicknameInput.value || '匿名';
+                }
+            }
+
+            // 如果目標畫面是 screen3，動態產生並顯示暱稱
+            if (targetId === '3') {
+                const nicknameDisplayContainer = document.getElementById('nicknameDisplay');
+                if (nicknameDisplayContainer) {
+                    // 清空舊的內容
+                    nicknameDisplayContainer.innerHTML = '';
+
+                    // 迴圈遍歷暱稱的每個字元，並創建一個 <p> 標籤
+                    for (const char of userNickname) {
+                        const p = document.createElement('p');
+                        p.classList.add('nickname-textdisplay');
+                        p.textContent = char;
+                        nicknameDisplayContainer.appendChild(p);
+                    }
+                }
+            }
+
         }
     });
 }
@@ -350,7 +400,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // 設定按鈕功能
     setupBlessingButtons();
     setupStyleButtons();
-    
+
     // 初始化圖片
     updateDisplayImage();
     updateOverlayImage();
@@ -362,3 +412,29 @@ document.addEventListener('DOMContentLoaded', () => {
 
 window.addEventListener('load', initialize);
 window.addEventListener('resize', initialize);
+// 在 DOMContentLoaded 事件監聽器內加入這段程式碼
+document.getElementById('downloadNicknameButton').addEventListener('click', () => {
+    const nicknameBar = document.querySelector('.nickname-bar');
+
+    if (!nicknameBar) {
+        console.error('找不到 .nickname-bar 元素');
+        return;
+    }
+
+    // 使用 html2canvas 將 nickname-bar 轉換為圖片
+    html2canvas(nicknameBar, {
+        backgroundColor: null, // 設定背景為透明
+        scale: 2 // 提高解析度，讓圖片更清晰
+    }).then(canvas => {
+        // 將 Canvas 轉換為圖片數據 URL
+        const image = canvas.toDataURL('image/png');
+
+        // 創建一個虛擬的 a 元素來下載圖片
+        const link = document.createElement('a');
+        link.href = image;
+        link.download = '我的燈籠暱稱.png';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    });
+});

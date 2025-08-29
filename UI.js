@@ -4,25 +4,25 @@ const blessings = [
     '健康', '快樂', '賺大錢', '金榜題名', '事事如意', '心想事成'
 ];
 const blessingImageMap = {
-    '地表最強': 'Img_compressed/LaternText1.png',
-    '彰化94讚': 'Img_compressed/LaternText2.png',
-    '控霸奔': 'Img_compressed/LaternText3.png',
-    '有彰力': 'Img_compressed/LaternText4.png',
-    '甲霸丸': 'Img_compressed/LaternText5.png',
-    '幸福平安': 'Img_compressed/LaternText6.png',
-    '健康': 'Img_compressed/LaternText7.png',
-    '快樂': 'Img_compressed/LaternText8.png',
-    '賺大錢': 'Img_compressed/LaternText9.png',
-    '金榜題名': 'Img_compressed/LaternText10.png',
-    '事事如意': 'Img_compressed/LaternText11.png',
-    '心想事成': 'Img_compressed/LaternText12.png'
+    '地表最強': './LaternText1.png',
+    '彰化94讚': './LaternText2.png',
+    '控霸奔': './LaternText3.png',
+    '有彰力': './LaternText4.png',
+    '甲霸丸': './LaternText5.png',
+    '幸福平安': './LaternText6.png',
+    '健康': './LaternText7.png',
+    '快樂': './LaternText8.png',
+    '賺大錢': './LaternText9.png',
+    '金榜題名': './LaternText10.png',
+    '事事如意': './LaternText11.png',
+    '心想事成': './LaternText12.png'
 };
 const styleImageMap = {
-    1: "Img_compressed/Latern1.png",
-    2: "Img_compressed/Latern2.png",
-    3: "Img_compressed/Latern3.png",
-    4: "Img_compressed/Latern4.png",
-    5: "Img_compressed/Latern5.png"
+    1: "./Latern1.png",
+    2: "./Latern2.png",
+    3: "./Latern3.png",
+    4: "./Latern4.png",
+    5: "./Latern5.png"
 };
 const styleColorsMap = {
     1: { bgColor: '#10334D', borderColor: 'linear-gradient( to right,#EBBB94,#EBBB94)', textColor: '#EBBB94' },
@@ -40,11 +40,11 @@ let userNickname = ''; // 新增全域變數來儲存暱稱
 function updateBackgroundImage() {
     const body = document.body;
     if (window.innerWidth <= 768) {
-        body.style.backgroundImage = "url('Img_compressed/BG3.png')";
+        body.style.backgroundImage = "url('./BG3.png')";
     } else if (window.innerWidth <= 1023) {
-        body.style.backgroundImage = "url('Img_compressed/BG2.png')";
+        body.style.backgroundImage = "url('./BG2.png')";
     } else {
-        body.style.backgroundImage = "url('Img_compressed/BG1.png')";
+        body.style.backgroundImage = "url('./BG1.png')";
     }
 }
 function updateScrollThumb() {

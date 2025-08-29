@@ -19,11 +19,11 @@
     <div id="screen0" class="screen active">
         <div class="main-container">
             <div class="logo-section">
-                <img src="./logo.png" alt="專案 Logo" class="logo-image">
+                <img src="Img_compressed/logo.png" alt="專案 Logo" class="logo-image">
             </div>
 
             <div class="visual-content-card">
-                <img id="displayImage0" src="./Latern1.png" alt="選擇的樣式圖片" class="responsive-image">
+                <img id="displayImage0" src="Img_compressed/Latern1.png" alt="選擇的樣式圖片" class="responsive-image">
             </div>
         </div>
         <div class="next-step-button-row">
@@ -47,12 +47,12 @@
     <div id="screen1" class="screen ">
         <div class="main-container">
             <div class="logo-section">
-                <img src="./logo.png" alt="專案 Logo" class="logo-image">
+                <img src="Img_compressed/logo.png" alt="專案 Logo" class="logo-image">
             </div>
 
             <div class="visual-content-card">
-                <img id="displayImage1" src="./Latern1.png" alt="選擇的樣式圖片" class="responsive-image">
-                <img id="overlayImage" src="./LaternText1.png" alt="祝福語圖片" class="responsive-image"
+                <img id="displayImage1" src="Img_compressed/Latern1.png" alt="選擇的樣式圖片" class="responsive-image">
+                <img id="overlayImage" src="Img_compressed/LaternText1.png" alt="祝福語圖片" class="responsive-image"
                     style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">
             </div>
         </div>
@@ -73,38 +73,50 @@
     </div>
 
     <div id="screen2" class="screen">
-        <div class="main-container">
-            <div class="logo-section">
-                <img src="./logo.png" alt="專案 Logo" class="logo-image">
-            </div>
-            <div class="visual-content-card">
-                <img id="displayImage2" src="./Latern1.png" alt="選擇的樣式圖片" class="responsive-image">
-                <img id="overlayImage2" src="./LaternText1.png" alt="" class="responsive-image"
-                    style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">
-            </div>
-            <div class="screen2-selection-bar">
-                <div class="text-contenter">
-                    <p class="text-title">燈籠繪製完成!</p>
-                    <p class="text-subtitle">現在，簽下你的個性暱稱，它將成為獨一無二的燈籠!</p>
-                    <input type="text" placeholder="彰化彭于晏" class="nickname-input">
+    <div class="main-container">
+        <div class="logo-section">
+            <img src="Img_compressed/logo.png" alt="專案 Logo" class="logo-image">
+        </div>
+        <div class="visual-content-card">
+            <div class="image-display-section">
+
+<img id="displayImage2" src="Img_compressed/Latern1.png" alt="選擇的樣式圖片" class="responsive-image">
+            <img id="overlayImage2" src="Img_compressed/LaternText1.png" alt="" class="responsive-image"
+                style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">
+            
+            <div class="nickname-bar">
+                <div class="nickname-text-container">
+                    <div id="nicknameDisplay2" class="nickname-text-wrapper"></div>
                 </div>
-                <div class="next-step-button-row">
-                    <button class="screen2-button btn" data-target-screen="1">上一步</button>
-                    <button class="screen2-button btn" data-target-screen="3">上傳</button>
-                </div>
+            </div>
+
+            </div>
+            
+            
+        </div>
+        <div class="screen2-selection-bar">
+            <div class="text-contenter">
+                <p class="text-title">燈籠繪製完成!</p>
+                <p class="text-subtitle">現在，簽下你的個性暱稱，它將成為獨一無二的燈籠!</p>
+                <input type="text" placeholder="彰化彭于晏" class="nickname-input">
+            </div>
+            <div class="next-step-button-row">
+                <button class="screen2-button btn" data-target-screen="1">上一步</button>
+                 <button id="uploadAndSwitch" class="screen2-button btn">上傳</button>
             </div>
         </div>
     </div>
+</div>
 
     <div id="screen3" class="screen">
         <div class="main-container">
             <div class="logo-section">
-                <img src="./logo.png" alt="專案 Logo" class="logo-image">
+                <img src="Img_compressed/logo.png" alt="專案 Logo" class="logo-image">
             </div>
             <div class="visual-content-card">
                 <div class="image-display-section">
-                    <img id="displayImage3" src="./Latern1.png" alt="選擇的樣式圖片" class="responsive-image">
-                    <img id="overlayImage3" src="./LaternText1.png" alt="祝福語圖片" class="responsive-image"
+                    <img id="displayImage3" src="Img_compressed/Latern1.png" alt="選擇的樣式圖片" class="responsive-image">
+                    <img id="overlayImage3" src="Img_compressed/LaternText1.png" alt="祝福語圖片" class="responsive-image"
                         style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">
                     <div class="nickname-bar">
                         <div class="nickname-text-container">
@@ -121,7 +133,8 @@
                 </div>
                 <div class="next-step-button-row">
                     <button class="screen2-button btn" data-target-screen="0">回首頁</button>
-                     <!-- <button id="downloadNicknameButton" class="screen3-button btn">下載暱稱圖片</button> -->
+
+                  
                 </div>
             </div>
         </div>
@@ -129,7 +142,9 @@
 
 
     <script src="UI.js"></script>
-    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+<!-- 確認你有引入 html2canvas -->
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+
 </body>
 
 </html>

@@ -581,3 +581,10 @@
             font-weight: bold;
 
         }
+        /* 這段樣式控制提示訊息 */
+.nickname-alert {
+    color: #ff4d4f; /* 醒目的紅色 */
+    font-size: 12px;
+    margin-top: 8px;
+    text-align: center;
+}
